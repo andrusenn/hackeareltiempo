@@ -17,8 +17,6 @@ Keys:
 
 Andrés Senn 07/2022
 
-#1of1 tezos
-
 */
 let ps = [];
 let cv;
