@@ -4,10 +4,10 @@ If with a single button we could go through time in another way?
 
 Each generation is tied to time (timestamp),
 and it is always the same generation given the same time.
-The first 12 hours of the day determine the tone of the background: black or white.
+The hours of the day determine the tone of the background: first 12 hours white / black the rest of the day.
 Every hour there is a new generation.
 
-or you can press "h" to unlink the generation from the time.
+or you can press "h" to unbind the generations from the time, so there will be a 10 second pause between generations.
 
 It is a generative work whose composition is based on the use of particles for drawing and fragmentation functions with a glitch aesthetic.
 
@@ -17,10 +17,10 @@ It is a generative work whose composition is based on the use of particles for d
 
 Cada generación está atada al tiempo (timestamp),
 y es siempre la misma dado el mismo tiempo.
-Las primeras 12 hs del día, determinan el tono del fondo: blanco o negro.
+Las horas del día determinan el tono del fondo: primeras 12hs blanco / negro el resto del día.
 Cada hora hay una generación nueva.
 
-o puedes presionar "h" para desvincular la generación del tiempo.
+o puedes presionar "h" para desvincular la generación del tiempo, de esta manera habrá una pausa de 10 segundos entre generaciones.
 
 Es un trabajo generativo cuya composición está basada en la utilización de partículas para el dibujo y funciones de fragmentación con una estética glitch. 
 
@@ -30,6 +30,7 @@ Andrés Senn 07/2022
 
 Keys:
 [h] -> controls generations tied to time.
+[s] -> download current image 2160 x 2160 px.
 
 
 ## Resultados / Results (outputs)

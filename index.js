@@ -2,20 +2,37 @@
 
 Hackear el tiempo / Hack the time
 
+If with a single button we could go through time in another way?
+
+Each generation is tied to time (timestamp),
+and it is always the same generation given the same time.
+The hours of the day determine the tone of the background: first 12 hours white / black the rest of the day.
+Every hour there is a new generation.
+
+or you can press "h" to unbind the generations from the time, so there will be a 10 second pause between generations.
+
+It is a generative work whose composition is based on the use of particles for drawing and fragmentation functions with a glitch aesthetic.
+
+-------------------
+
 ¿Si con un solo boton pudiéramos recorrer el tiempo de otra manera?
 
 Cada generación está atada al tiempo (timestamp),
 y es siempre la misma dado el mismo tiempo.
-Las primeras 12 hs del día, determinan el tono del fondo: blanco o negro.
+Las horas del día determinan el tono del fondo: primeras 12hs blanco / negro el resto del día.
 Cada hora hay una generación nueva.
 
-o puedes presionar "h" para desvincular la generación del tiempo.
+o puedes presionar "h" para desvincular la generación del tiempo, de esta manera habrá una pausa de 10 segundos entre generaciones.
 
-
-Keys:
-[h] -> controls generations tied ti time.
+Es un trabajo generativo cuya composición está basada en la utilización de partículas para el dibujo y funciones de fragmentación con una estética glitch. 
 
 Andrés Senn 07/2022
+
+*******
+
+Keys:
+[h] -> controls generations tied to time.
+[s] -> download current image 2160 x 2160 px.
 
 */
 let ps = [];
@@ -24,30 +41,38 @@ let seed;
 let counter = 0;
 let cutIndex = 0;
 let hack = false;
-let rest = 1000 * 60 * 60;
+let rest;
 let ROT = 0;
+let minInit;
 function setup() {
 	cv = createCanvas(2160, 2160);
 	cv.parent("cv");
 	pixelDensity(1);
+
+	// Init minute
+	minInit = int(((Date.now() / 1000 / 60 / 60) % 1) * 60);
+
 	init();
 
 	document.title = `Hackear el tiempo | Andr\u00e9s Senn | 2022`;
 	console.log(
-		`%cHackear el tiempo / #1of1 tezos / 07-2022 \u007e / Andr\u00e9s Senn`,
+		`%cHackear el tiempo / 07-2022 \u007e / Andr\u00e9s Senn`,
 		"background: #000; color: #ccc;padding:5px;font-size:15px",
 	);
 }
 function draw() {
+	noiseSeed(seed);
+	randomSeed(seed);
 	noSmooth();
 	push();
 	translate(width / 2, height / 2);
 	rotate(ROT);
 	translate(-width / 2, -height / 2);
-	if (counter > 1000) {
+	if (counter > 600) {
 		let to = setTimeout(() => {
-			init();
 			clearTimeout(to);
+			minInit = 0;
+			init();
 		}, rest);
 		noLoop();
 	}
@@ -92,7 +117,7 @@ function draw() {
 		) {
 			cut(ps[i].pos.x, ps[i].pos.y);
 			// WNoises & RColors
-			noisemix(ps[i].pos.x, ps[i].pos.y, random(5, 40), random(5, 40));
+			noisemix(ps[i].pos.x, ps[i].pos.y, random(5, 100), random(5, 40));
 			noisecolor(ps[i].pos.x, ps[i].pos.y, random(5, 20), random(5, 100));
 		}
 	}
@@ -103,38 +128,39 @@ function draw() {
 	counter++;
 }
 function init() {
-	clear();
 	// IE8
 	if (!Date.now) {
 		Date.now = function () {
 			return new Date().getTime();
 		};
 	}
+
+	// Tied to time
 	let d = new Date();
 	let hour = d.getHours();
-	let hackthefuture = int(Date.now() / 1000 / 60 / 60 / 24);
-	rest = 1000 * 60 * 60;
-	//if (hack) {
+	let hackthetime = int(Date.now() / 1000 / 60 / 60);
+	// Rest an hour
+	rest = 1000 * 60 * (60 - minInit);
+	// Hack, not tied
+	if (hack) {
 		hour = int(random(24));
-		hackthefuture = int(random(100000000000));
+		hackthetime = int(random(Date.now()));
+		// Rest 10 seconds
 		rest = 10000;
-	//}
+	}
 
-	seed = hackthefuture;
+	seed = hackthetime;
 	noiseSeed(seed);
 	randomSeed(seed);
-	
+
 	// Rotation content
 	ROT = (int(random(8)) * PI) / 4;
 
 	// Background
-	let body = document.querySelector("body");
-	if (hour <= 12) {
+	if (hour < 12) {
 		background(255);
-		body.style.backgroundColor = "#ffffff";
 	} else {
 		background(0);
-		body.style.backgroundColor = "#000000";
 	}
 
 	// Particles
@@ -152,6 +178,7 @@ function init() {
 	}
 
 	counter = 0;
+	cutIndex = 0;
 	loop();
 }
 function noisemix(_x, _y, _w, _h) {
@@ -160,8 +187,8 @@ function noisemix(_x, _y, _w, _h) {
 	let c = random(0, 255);
 	let w = _w;
 	let h = _h;
-	for (let x = _x; x < _x + w; x += s) {
-		for (let y = _y; y < _y + h; y += s) {
+	for (let x = _x - w / 2; x < _x + w / 2; x += s) {
+		for (let y = _y - h / 2; y < _y + h / 2; y += s) {
 			s = random(2, 5);
 			c = 255;
 			if (random(1) > 0.5) {
@@ -179,8 +206,8 @@ function noisecolor(_x, _y, _w, _h) {
 	let s = random(1, 8);
 	let w = _w;
 	let h = _h;
-	for (let x = _x; x < _x + w; x += s) {
-		for (let y = _y; y < _y + h; y += s) {
+	for (let x = _x - w / 2; x < _x + w / 2; x += s) {
+		for (let y = _y - h / 2; y < _y + h / 2; y += s) {
 			s = random(1, 8);
 			noStroke();
 			fill(random(255), random(255), random(255));
@@ -192,6 +219,8 @@ function noisecolor(_x, _y, _w, _h) {
 
 function cut(_x, _y) {
 	push();
+	imageMode(CENTER);
+	rectMode(CENTER);
 	noFill();
 	noSmooth();
 	let w = random(40, 200);
@@ -233,20 +262,10 @@ class P {
 }
 
 function grabImage() {
-	let date =
-		year() +
-		"" +
-		month() +
-		"" +
-		day() +
-		"" +
-		hour() +
-		"" +
-		minute() +
-		"" +
-		second() +
-		"" +
-		".png";
+	let date = Date.now() + "" + ".png";
+	if(hack){
+		date = "hacked.png";
+	}
 	console.log(
 		`%c SAVING ${
 			String.fromCodePoint(0x1f5a4) + String.fromCodePoint(0x1f90d)
@@ -262,6 +281,9 @@ function keyReleased() {
 	// Hack the time
 	if (key == "h" || key == "H") {
 		hack = !hack;
+		if (!hack) {
+			minInit = int(((Date.now() / 1000 / 60 / 60) % 1) * 60);
+		}
 		init();
 	}
 }
